@@ -3,7 +3,6 @@ import { FormGroup, Label, Input, Button } from 'reactstrap';
 import axios from 'axios';
 
 
-
 export default class SignUp extends Component {
 
 
@@ -18,12 +17,10 @@ export default class SignUp extends Component {
         
         axios.post('reg', data)
         .then(res => {
-                console.log(res.data.msg)
-            })
-        .then(res => {
            if (res.data.success) {
                alert(res.data.msg)
-           } else {
+               window.location.href = '/';
+            } else {
             alert(res.data.msg)
            }
         })
@@ -39,6 +36,7 @@ export default class SignUp extends Component {
         return (
             <form onSubmit={this.handleSubmit}>
                 <h3>Sign Up</h3>
+                
 
                 <FormGroup>
                     <Label for="name">Name</Label>
@@ -54,7 +52,7 @@ export default class SignUp extends Component {
 
                 <FormGroup>
                     <Label for="email">Email</Label>
-                    <Input type="email" id="email" placeholder="Email"
+                    <Input type="text" id="email" placeholder="Email"
                         onChange={e => this.email = e.target.value} />
                 </FormGroup>
 
