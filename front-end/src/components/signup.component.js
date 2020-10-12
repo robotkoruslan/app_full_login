@@ -3,25 +3,31 @@ import { FormGroup, Label, Input, Button } from 'reactstrap';
 import axios from 'axios';
 
 
+
 export default class SignUp extends Component {
 
 
     handleSubmit = e => {
         e.preventDefault();
         const data = {
-            name: this.firstName,
+            name: this.name,
             login: this.login,
             email: this.email,
             password: this.password
         }
-        if(!data.name){
-            console.log('Enter name')
-        }
-        axios.post('contacts', data).then(
-            res => {
-                console.log(res.body)
-            }
-        ).catch(
+        
+        axios.post('reg', data)
+        .then(res => {
+                console.log(res.data.msg)
+            })
+        .then(res => {
+           if (res.data.success) {
+               alert(res.data.msg)
+           } else {
+            alert(res.data.msg)
+           }
+        })
+        .catch(
             err => {
                 console.log(err);
             }
