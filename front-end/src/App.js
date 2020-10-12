@@ -10,7 +10,13 @@ import Users from "./components/users";
 import Home from "./components/home";
 
 
+
+
 function App() {
+ function logoutUser(){
+    alert('Good Bye!')
+    localStorage.clear()
+  }
   return (
   <Router>
     <div className="App">
@@ -26,6 +32,9 @@ function App() {
                 <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
               </li>
               <li className="nav-item">
+                <Link className="nav-link" to={"/"} onClick={logoutUser}>Logout</Link>
+              </li>
+              <li className="nav-item">
                 <Link className="nav-link" to={"/home"}>Home</Link>
               </li>
               <li className="nav-item">
@@ -35,7 +44,9 @@ function App() {
           </div>
         </div>
       </nav>
+      
 
+  
       <div className="auth-wrapper">
         <div className="auth-inner">
           <Switch>

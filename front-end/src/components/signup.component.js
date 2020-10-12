@@ -8,17 +8,17 @@ export default class SignUp extends Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        const data = {
+        const user = {
             name: this.name,
             login: this.login,
             email: this.email,
             password: this.password
         }
         
-        axios.post('reg', data)
+        axios.post('reg', user)
         .then(res => {
            if (res.data.success) {
-               alert(res.data.msg)
+               alert(res.user.msg)
                window.location.href = '/';
             } else {
             alert(res.data.msg)
@@ -29,7 +29,7 @@ export default class SignUp extends Component {
                 console.log(err);
             }
         )
-        console.log(data);
+        console.log(user);
     }
 
     render() {
