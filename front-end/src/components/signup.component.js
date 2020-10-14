@@ -18,7 +18,7 @@ export default class SignUp extends Component {
         axios.post('reg', user)
         .then(res => {
            if (res.data.success) {
-               alert(res.user.msg)
+               alert(res.data.msg)
                window.location.href = '/';
             } else {
             alert(res.data.msg)
@@ -31,7 +31,7 @@ export default class SignUp extends Component {
         )
         console.log(user);
     }
-
+    
     render() {
         return (
             <form onSubmit={this.handleSubmit}>

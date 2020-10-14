@@ -1,7 +1,9 @@
+// import React, {useState , useEffect} from 'react';
 import React from 'react';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+
 
 
 import Login from "./components/login.component";
@@ -13,10 +15,30 @@ import Home from "./components/home";
 
 
 function App() {
- function logoutUser(){
+  
+
+  function logoutUser(){
     alert('Good Bye!')
     localStorage.clear()
+    window.location.href = '/'
   }
+  const isAuthenticated = () => {
+    let hasToken = localStorage.getItem("token");
+    if (hasToken) return true;
+    return false;
+};
+ 
+console.log(isAuthenticated())
+  // const [user, setUser] = useState()
+
+  // useEffect(() => {
+  //   const loggedInUser = localStorage.getItem("user");
+  //   if (loggedInUser) {
+  //     const foundUser = JSON.parse(loggedInUser);
+  //     setUser(foundUser);
+  //   }
+  // }, []);
+
   return (
   <Router>
     <div className="App">
@@ -25,19 +47,19 @@ function App() {
           <Link className="navbar-brand" to={"/"}></Link>
           <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul className="navbar-nav ml-auto">
-              <li className="nav-item">
+              <li className="nav-item" hidden={isAuthenticated()}>
                 <Link className="nav-link" to={"/"}>Login</Link>
               </li>
-              <li className="nav-item">
+              <li className="nav-item" hidden={isAuthenticated()}>
                 <Link className="nav-link" to={"/sign-up"}>Sign up</Link>
               </li>
-              <li className="nav-item">
+              <li className="nav-item" hidden={!isAuthenticated()}>
                 <Link className="nav-link" to={"/"} onClick={logoutUser}>Logout</Link>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link" to={"/home"}>Home</Link>
+              <li className="nav-item"hidden={!isAuthenticated()}>
+                <Link className="nav-link " to={"/home"}>Home</Link>
               </li>
-              <li className="nav-item">
+              <li className="nav-item"hidden={!isAuthenticated()}>
                 <Link className="nav-link" to={"/users"}>Users</Link>
               </li>
             </ul>

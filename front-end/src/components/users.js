@@ -8,18 +8,15 @@ export default class Users extends Component {
   state = {
     contacts: [],
     newContactData: {
-      first_name: '',
-      last_name: '',
-      email: '',
-      password: '',
-      password_confirm: ''
+      name: '',
+      login: '',
+      email: ''
     },
     editContactData: {
       id: '',
-      first_name: '',
-      last_name: '',
-      email: '',
-      password: ''
+      name: '',
+      login: '',
+      email: ''
     },
     newContactModal: false,
     editContactModal: false
@@ -58,21 +55,21 @@ export default class Users extends Component {
     })
   }
   updateContact() {
-    let { first_name, last_name, email, password } = this.state.editContactData;
+    let { name, email, login } = this.state.editContactData;
 
     axios.put('contacts/' + this.state.editContactData.id, {
-      first_name, last_name, email, password
+      name, login, email
     }).then((response) => {
       console.log(response.data);
       this._refreshList()
       this.setState({
-        editContactModal: false, editContactData: { id: '', first_name: '', last_name: '', email: '', password: '' }
+        editContactModal: false, editContactData: { id: '', name: '', email: '', login: '' }
       })
     })
   }
-  editContact(id, first_name, last_name, email, password) {
+  editContact(id, name, email, login) {
     this.setState({
-      editContactData: { id, first_name, last_name, email, password }, editContactModal: !this.state.editContactModal
+      editContactData: { id, name, email, login }, editContactModal: !this.state.editContactModal
     })
   }
   deleteContact(id) {
@@ -82,7 +79,7 @@ export default class Users extends Component {
   }
   _refreshList() {
    
-    axios.get('contacts').then((response) => {
+    axios.get('dashboard').then((response) => {
       this.setState({
         contacts: response.data
       })
@@ -94,10 +91,9 @@ export default class Users extends Component {
       return (
         <tr key={contact.id}>
           <td>{contact.id}</td>
-          <td>{contact.first_name}</td>
-          <td>{contact.last_name}</td>
+          <td>{contact.name}</td>
           <td>{contact.email}</td>
-          <td>{contact.password}</td>
+          <td>{contact.login}</td>
           <td>
             <Button color="success" size="sm" className="mr-2" onClick={this.editContact.bind(this, contact.id, contact.first_name, contact.last_name, contact.email, contact.password)}>Edit</Button>
             <Button color="danger" size="sm" onClick={this.deleteContact.bind(this, contact.id)}>Delete</Button>

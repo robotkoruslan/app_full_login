@@ -44,6 +44,15 @@ export default class Login extends Component {
             // this.token = token;
             // this.user = user;
         }
+        // function isAutheticated() {
+        //     return tokenNotExpired()
+        // }
+
+        const isAuthenticated = () => {
+    let hasToken = localStorage.getItem("jwtToken");
+    if (hasToken) return true;
+    return false;
+};
     }
 
     render() {
