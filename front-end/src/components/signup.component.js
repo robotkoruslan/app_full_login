@@ -13,7 +13,7 @@ export default class SignUp extends Component {
     };
 
     axios
-      .post("reg", user)
+      .post("/account/reg", user)
       .then((res) => {
         if (res.data.success) {
           alert(res.data.msg);

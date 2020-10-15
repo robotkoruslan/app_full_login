@@ -6,6 +6,7 @@ const passport = require('passport');
 const path = require('path');
 const config = require('./config/db')
 const account = require('./routes/account')
+const User = require('./models/user');
 
 const app = express();
 
@@ -34,6 +35,9 @@ app.listen(port, () => {
 
 app.get('/', (req, res) => {
     res.send("Home page")
+})
+app.get('/users', (req, res) => {
+    User.find().then(user => res.json(user))
 })
 
 app.use('/account', account)

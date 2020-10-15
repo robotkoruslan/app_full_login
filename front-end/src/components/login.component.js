@@ -18,7 +18,7 @@ export default class Login extends Component {
     }
 
     axios
-      .post("auth", user)
+      .post("/account/auth", user)
       .then((res) => {
         console.log(res.data.success);
         if (!res.data.success) {

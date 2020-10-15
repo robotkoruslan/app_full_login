@@ -7,7 +7,7 @@ import * as serviceWorker from "./serviceWorker";
 import axios from "axios"
 
 
-axios.defaults.baseURL = 'http://localhost:3000/account/';
+axios.defaults.baseURL = 'http://localhost:3000/';
 ReactDOM.render(
     <BrowserRouter>
         <App />

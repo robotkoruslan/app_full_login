@@ -21,7 +21,6 @@ export default class Users extends Component {
       email: "",
     },
     editContactData: {
-      id: "",
       name: "",
       login: "",
       email: "",
@@ -29,7 +28,7 @@ export default class Users extends Component {
     newContactModal: false,
     editContactModal: false,
   };
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     this._refreshList();
   }
 
@@ -54,19 +53,18 @@ export default class Users extends Component {
         contacts,
         newContactModal: false,
         newContactData: {
-          first_name: "",
-          last_name: "",
-          email: "",
-          password: "",
+          name: "",
+          login: "",
+          email: ""
         },
       });
     });
   }
   updateContact() {
-    let { name, email, login } = this.state.editContactData;
+    let { name, login, email } = this.state.editContactData;
 
     axios
-      .put("contacts/" + this.state.editContactData.id, {
+      .put("contacts/" + this.state.editContactData._id, {
         name,
         login,
         email,
@@ -76,7 +74,7 @@ export default class Users extends Component {
         this._refreshList();
         this.setState({
           editContactModal: false,
-          editContactData: { id: "", name: "", email: "", login: "" },
+          editContactData: { name: "", email: "", login: "" },
         });
       });
   }
@@ -87,12 +85,12 @@ export default class Users extends Component {
     });
   }
   deleteContact(id) {
-    axios.delete("contacts/" + id).then((response) => {
+    axios.delete("users/" + id).then((response) => {
       this._refreshList();
     });
   }
   _refreshList() {
-    axios.get("dashboard").then((response) => {
+    axios.get("users").then((response) => {
       this.setState({
         contacts: response.data,
       });
@@ -102,8 +100,7 @@ export default class Users extends Component {
   render() {
     let contacts = this.state.contacts.map((contact) => {
       return (
-        <tr key={contact.id}>
-          <td>{contact.id}</td>
+        <tr key={contact._id}>
           <td>{contact.name}</td>
           <td>{contact.email}</td>
           <td>{contact.login}</td>
@@ -114,11 +111,10 @@ export default class Users extends Component {
               className="mr-2"
               onClick={this.editContact.bind(
                 this,
-                contact.id,
-                contact.first_name,
-                contact.last_name,
+                contact._id,
+                contact.name,
                 contact.email,
-                contact.password
+                contact.login
               )}
             >
               Edit
@@ -126,7 +122,7 @@ export default class Users extends Component {
             <Button
               color="danger"
               size="sm"
-              onClick={this.deleteContact.bind(this, contact.id)}
+              onClick={this.deleteContact.bind(this, contact._id)}
             >
               Delete
             </Button>
@@ -157,10 +153,10 @@ export default class Users extends Component {
               <Label for="first_name">First name</Label>
               <Input
                 id="first_name"
-                value={this.state.newContactData.first_name}
+                value={this.state.newContactData.name}
                 onChange={(e) => {
                   let { newContactData } = this.state;
-                  newContactData.first_name = e.target.value;
+                  newContactData.name = e.target.value;
                   this.setState({ newContactData });
                 }}
               />
