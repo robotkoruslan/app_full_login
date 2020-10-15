@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Login from "./components/login.component";
 import SignUp from "./components/signup.component";
 import Users from "./components/users";
-import Home from "./components/home";
+import Dashboard from "./components/dashboard";
 
 
 
@@ -20,6 +20,7 @@ function App() {
   function logoutUser(){
     alert('Good Bye!')
     localStorage.clear()
+    
     window.location.href = '/'
   }
   const isAuthenticated = () => {
@@ -29,17 +30,10 @@ function App() {
 };
  
 console.log(isAuthenticated())
-  // const [user, setUser] = useState()
 
-  // useEffect(() => {
-  //   const loggedInUser = localStorage.getItem("user");
-  //   if (loggedInUser) {
-  //     const foundUser = JSON.parse(loggedInUser);
-  //     setUser(foundUser);
-  //   }
-  // }, []);
 
-  return (
+
+return (
   <Router>
     <div className="App">
       <nav className="navbar navbar-expand-lg navbar-light fixed-top">
@@ -57,7 +51,7 @@ console.log(isAuthenticated())
                 <Link className="nav-link" to={"/"} onClick={logoutUser}>Logout</Link>
               </li>
               <li className="nav-item"hidden={!isAuthenticated()}>
-                <Link className="nav-link " to={"/home"}>Home</Link>
+                <Link className="nav-link " to={"/dashboard"}>Home</Link>
               </li>
               <li className="nav-item"hidden={!isAuthenticated()}>
                 <Link className="nav-link" to={"/users"}>Users</Link>
@@ -75,7 +69,7 @@ console.log(isAuthenticated())
             <Route exact path="/" component={Login} />
             <Route path='/users' component={Users} />
             <Route path="/sign-up" component={SignUp} />
-            <Route path="/home" component={Home} />
+            <Route path="/dashboard" component={Dashboard} />
           </Switch>
         </div>
       </div>

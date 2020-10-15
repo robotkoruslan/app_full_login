@@ -57,8 +57,17 @@ router.post('/auth', (req, res) => {
     })
 });
 
-router.get('/dashboard', passport.authenticate('jwt', {session : false}), (req, res) => {
-    res.send("Dashboard")
+// router.get('/dashboard', passport.authenticate('jwt', {session : false}), (req, res) => {
+//     res.send("Dashboard")
+//     console.log(res);
+// });
+
+router.get('/dashboard', (req, res) => {
+    res.json
 });
+
+// router.get('/users', passport.authenticate('jwt', {session : false}), (req, res) => {
+//     res.send("users")
+// });
 
 module.exports = router;
