@@ -23,6 +23,19 @@ router.post('/reg', (req, res) => {
     });
 });
 
+router.delete('/'), (req, res) => {
+    const id = req.body._id;
+    User.getUserById(id, (err, user) => {
+        if(err) throw err;
+        if(!user) {
+            return res.json({success: false, msg: "This user was not found."})
+        }else{
+            res.json('do do do')
+        }
+    }
+    )
+}
+
 router.post('/auth', (req, res) => {
     const login = req.body.login;
     const password = req.body.password;
@@ -56,6 +69,7 @@ router.post('/auth', (req, res) => {
         })
     })
 });
+
 
 // router.get('/dashboard', passport.authenticate('jwt', {session : false}), (req, res) => {
 //     res.send("Dashboard")
