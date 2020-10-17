@@ -45,7 +45,7 @@ app.get('/users/:id', (req, res) => {
 })
 
 app.delete('/users/:id', (req, res) => {
-    User.findByIdAndRemove(req.params.id).then(user => res.json(user))
+    User.findByIdAndDelete(req.params.id).then(user => res.json(user))
 })
 // app.get(id) {
 //     axios.delete("/users" + id).then(user => res.json(user));
