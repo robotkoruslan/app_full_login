@@ -85,7 +85,7 @@ export default class Users extends Component {
     });
   }
   deleteContact(id) {
-    axios.delete("users/" + id).then((response) => {
+    axios.delete("/users/" + id).then((response) => {
       this._refreshList();
     });
   }
@@ -286,10 +286,9 @@ export default class Users extends Component {
         <Table>
           <thead>
             <tr>
-              <th>#</th>
-              <th>First name</th>
-              <th>Last name</th>
+              <th>Name</th>
               <th>Email</th>
+              <th>Login</th>
               <th>Actions</th>
             </tr>
           </thead>

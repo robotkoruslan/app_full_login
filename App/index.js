@@ -40,4 +40,31 @@ app.get('/users', (req, res) => {
     User.find().then(user => res.json(user))
 })
 
+app.get('/users/:id', (req, res) => {
+    User.findById(req.params.id).then(user => res.json(user))
+})
+
+app.delete('/users/:id', (req, res) => {
+    User.findByIdAndRemove(req.params.id).then(user => res.json(user))
+})
+// app.get(id) {
+//     axios.delete("/users" + id).then(user => res.json(user));
+//   }
+  
+// app.delete('/users/id', (req, res) => {
+//     User.filter(c => c._id !== req.params._id)
+//     res.status(200).json('delete contact')
+// })
+app.delete('/'), (req, res) => {
+    const id = req.body._id;
+    User.getUserById(id, (err, user) => {
+        if(err) throw err;
+        if(!user) {
+            return res.json({success: false, msg: "This user was not found."})
+        }else{
+            res.json('do do do')
+        }
+    }
+    )
+}
 app.use('/account', account)
