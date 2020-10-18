@@ -18,6 +18,14 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    date: { type: Date, default: Date.now },
+    friends: [
+        {name: String}
+    ],
+    addFriends: [
+        {name: String}
+    ]
+
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);

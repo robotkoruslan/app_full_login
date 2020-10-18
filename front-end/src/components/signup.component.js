@@ -11,6 +11,17 @@ export default class SignUp extends Component {
       email: this.email,
       password: this.password,
     };
+    if (!user.name) {
+      alert("Enter Name");
+    } else if (!user.login) {
+      alert("Enter Login");
+    } else if (!user.email) {
+      alert("Enter Email");
+    } else if (!user.password) {
+      alert("Enter Password");
+    } else {
+      console.log("Data will send on server");
+    }
 
     axios
       .post("/account/reg", user)
