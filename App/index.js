@@ -8,30 +8,49 @@ const config = require('./config/db')
 const account = require('./routes/account')
 const User = require('./models/user');
 
-const app = express();
 
-const port = 3000;
+const app = express();
+app.use(cors())
+require('./routes/routes.js')(app);
+
+const port = 3001;
 
 app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
 
-app.use(cors())
 
 app.use(bodyParser.json())
 
-mongoose.connect(config.db, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect(config.db, { useNewUrlParser: true, useUnifiedTopology: true });
 
-mongoose.connection.on('connected', ()=>{
-    console.log("Succesfull conection to database");
-});
-mongoose.connection.on('error', (err)=>{
-    console.log("Not succesfull conection to database" + err);
-});
+// mongoose.connection.on('connected', ()=>{
+//     console.log("Succesfull conection to database");
+// });
+// mongoose.connection.on('error', (err)=>{
+//     console.log("Not succesfull conection to database" + err);
+// });
 
-app.listen(port, () => {
-    console.log("Server was ranning" + port);
-})
+// app.listen(port, () => {
+//     console.log("Server was ranning" + port);
+// })
+mongoose.connect(config.db, {useNewUrlParser: true, useUnifiedTopology: true
+}).then(mongoose.connection.on('connected',() => {
+  console.log ("Successfully connected to the database" + port);
+})).catch(err => {
+    console.log('Could not connect to the database.', err);
+process.exit();
+}, function (err, database) {
+    if (err) {
+        return console.log(err);
+    }
+    db = database;
+});
+        app.listen(port, () => {
+            console.log('Start API Server and connected to database')
+        })
+mongoose.set('debug', true);
+
 
 app.get('/', (req, res) => {
     res.send("Home page")
