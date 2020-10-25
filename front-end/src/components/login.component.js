@@ -6,11 +6,11 @@ export default class Login extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const user = {
-      login: this.login,
+      username: this.username,
       password: this.password,
     };
-    if (!user.login) {
-      alert("Enter Login");
+    if (!user.username) {
+      alert("Enter Username");
     } else if (!user.password) {
       alert("Enter Password");
     } else {
@@ -18,7 +18,7 @@ export default class Login extends Component {
     }
 
     axios
-      .post("/account/auth", user)
+      .post("/users/login", user)
       .then((res) => {
         console.log(res.data.success);
         if (!res.data.success) {
@@ -45,12 +45,12 @@ export default class Login extends Component {
         <h3>Login</h3>
 
         <FormGroup>
-          <Label>Login</Label>
+          <Label>Username</Label>
           <Input
-            type="login"
+            type="Username"
             className=""
-            placeholder="Login"
-            onChange={(e) => (this.login = e.target.value)}
+            placeholder="Username"
+            onChange={(e) => (this.username = e.target.value)}
           />
         </FormGroup>
 

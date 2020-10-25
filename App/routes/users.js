@@ -1,23 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/db');
 
 
-router.post('/reg', (req, res) => {
-    let newUser = new User({
+const User = require('../models/user');
+
+//Users list
+router.get('/', (req, res) => {
+    User.find().then(user => res.json(user))
+})
+
+//Delete user
+router.delete('/:id', (req, res) => {
+    User.findByIdAndDelete(req.params.id).then(user => res.json(user))
+})
+
+
+// Register
+router.get('/register', (req, res) => {
+    res.send("Register Page")
+})
+
+router.post('/register', (req, res) => {
+     let newUser = new User({
         name: req.body.name,
         email: req.body.email,
-        login: req.body.login,
+        username: req.body.username,
         password: req.body.password,
-        date: req.body.date,
-        friends: req.body.friends,
-        addFriends: []
     });
 
-    User.addUser(newUser, (err, user) => {
+    User.createUser(newUser, (err, user) => {
         if(err) {
             res.json({success: false, msg: "User has not been added."})
         }
@@ -25,20 +39,26 @@ router.post('/reg', (req, res) => {
             res.json({success: true, msg: "User has been added."})
         }
     });
+    //  res.redirect('/users/login');   
 });
 
 
-router.post('/auth', (req, res) => {
-    const login = req.body.login;
+// Login
+router.get('/login', function (req, res) {
+    res.send('login');
+});
+
+router.post('/login', (req, res) => {
+    const username = req.body.username;
     const password = req.body.password;
 
-    User.getUserByLogin(login, (err, user) => {
+    User.getUserByUsername(username, (err, user) => {
         if(err) throw err;
         if(!user) {
             return res.json({success: false, msg: "This user was not found."})
         };
         
-        User.comparePass(password, user.password, (err, isMatch) => {
+        User.comparePassword(password, user.password, (err, isMatch) => {
             if(err) throw err;
             if(isMatch) {
                 const token = jwt.sign(user.toJSON(), config.secret, {
@@ -51,29 +71,20 @@ router.post('/auth', (req, res) => {
                     user: {
                         id: user._id,
                         name: user.name,
-                        login: user.login,
+                        username: user.username,
                         email: user.email,
                     }
                 })
+                res.redirect('/login')
             } else {
                 return res.json({success: false, msg: "Password mismatch"})
             }
         })
     })
 });
-
-
-router.get('/dashboard', passport.authenticate('jwt', {session : false}), (req, res) => {
-    res.send("Dashboard")
-    console.log(res);
+router.get('/logout', function (req, res) {
+    req.logout();
+    res.send('logout')
+	//res.redirect('/users/login');
 });
-
-router.get('/dashboard', (req, res) => {
-    res.json
-});
-
-// router.get('/users', passport.authenticate('jwt', {session : false}), (req, res) => {
-//     res.send("users")
-// });
-
 module.exports = router;

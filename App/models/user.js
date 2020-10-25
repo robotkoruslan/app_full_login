@@ -1,58 +1,48 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const config = require('../config/db');
+const bcrypt = require('bcryptjs');
+const ObjectId = mongoose.Schema.Types.ObjectId;
 
+// User Schema
 const UserSchema = mongoose.Schema({
-    name: {
-        type: String
-    },
-    email: {
-        type: String,
-        required: true
-    },
-    login: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    date: { type: Date, default: Date.now },
-    friends: [
-        {name: String}
-    ],
-    addFriends: [
-        {name: String}
-    ]
-
+	username: {
+		type: String,
+		index:true
+	},
+	password: {
+		type: String
+	},
+	email: {
+		type: String
+	},
+	name: {
+		type: String
+	},
+	friends: [{ type: ObjectId, ref: 'User' }],
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);
 
-module.exports.getUserByLogin = function(login, callback) {
-    const query = {login: login};
-    User.findOne(query, callback);
-};
+module.exports.createUser = function(newUser, callback){
+	bcrypt.genSalt(10, function(err, salt) {
+	    bcrypt.hash(newUser.password, salt, function(err, hash) {
+	        newUser.password = hash;
+	        newUser.save(callback);
+	    });
+	});
+}
 
-module.exports.getUserById = function(id, callback) {
-    User.findById(id, callback);
-};
+module.exports.getUserByUsername = function(username, callback){
+	const query = {username: username};
+	User.findOne(query, callback);
+}
 
-module.exports.addUser = function(newUser, callback) {
-    bcrypt.genSalt(10, function(err, salt) {
-        bcrypt.hash(newUser.password, salt, function(err, hash) {
-            if (err) throw err;
-            newUser.password = hash;
-            newUser.save(callback);
-        });
-    });
-   
-};
+module.exports.getUserById = function(id, callback){
+	User.findById(id, callback);
+}
 
-module.exports.comparePass = function(passFromUser, userDbPass, callback) {
-    bcrypt.compare(passFromUser, userDbPass, (err, isMatch) => {
-        if(err) throw err;
-        callback(null, isMatch);
-    });
-};
+module.exports.comparePassword = function(candidatePassword, hash, callback){
+	bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+    	if(err) throw err;
+    	callback(null, isMatch);
+	});
+}
