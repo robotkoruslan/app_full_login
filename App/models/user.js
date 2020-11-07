@@ -4,20 +4,13 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 
 // User Schema
 const UserSchema = mongoose.Schema({
-	username: {
-		type: String,
-		index:true
-	},
-	password: {
-		type: String
-	},
-	email: {
-		type: String
-	},
-	name: {
-		type: String
-	},
-	friends: [{ type: ObjectId, ref: 'User' }],
+	username: {type: String, index:true	},
+	password: {type: String},
+	email: {type: String},
+	name: {type: String},
+	accessToken: {type: String},
+	friends: [],
+    notification: []
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var FriendsSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    name: String
+    username: String
 });
 
 mongoose.model('Friends', FriendsSchema);

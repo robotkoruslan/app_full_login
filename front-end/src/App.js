@@ -24,7 +24,7 @@ function App() {
     window.location.href = '/'
   }
   const isAuthenticated = () => {
-    let hasToken = localStorage.getItem("token");
+    let hasToken = localStorage.getItem("accessToken");
     if (hasToken) return true;
     return false;
 };

@@ -10,7 +10,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const mongo = require('mongodb');
 const mongoose = require('mongoose');
-const socketIO = require('socket.io');
+const socketIO = require('socket.io')(http);
 const cors = require('cors');
 const users = require('./routes/users');
 
@@ -21,6 +21,13 @@ const User = require('./models/user');
 const app = express();
 
 const port = 3001;
+
+socketID = "";
+socketIO.on("connection", function(socket){
+    console.log("User connected", socket.id);
+    socketID = socket.id;
+})
+
 
 // Passport init
 app.use(passport.initialize());

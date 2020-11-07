@@ -63,8 +63,7 @@ export default class Users extends Component {
   updateContact() {
     let { name, login, email } = this.state.editContactData;
 
-    axios
-      .put("contacts/" + this.state.editContactData._id, {
+    axios.put("contacts/" + this.state.editContactData._id, {
         name,
         login,
         email,

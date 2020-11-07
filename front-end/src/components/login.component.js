@@ -5,6 +5,7 @@ import axios from "axios";
 export default class Login extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
+
     const user = {
       username: this.username,
       password: this.password,
@@ -17,26 +18,25 @@ export default class Login extends Component {
       console.log("Data will send on server");
     }
 
-    axios
-      .post("/users/login", user)
+    axios.post("/users/login", user)
       .then((res) => {
-        console.log(res.data.success);
-        if (!res.data.success) {
-          alert(res.data.msg);
-        } else {
-          alert("You have successfully loged in!");
+        if (res.data.status === "success") {
+          const accessToken = res.data.accessToken;
+          localStorage.setItem("accessToken", accessToken);
           window.location.href = "/dashboard";
-          storeUser(res.data.token, res.data.user);
+        } else { 
+          alert(res.data.message)
+          window.location.href = "/";
         }
       })
       .catch((err) => {
         console.log(err);
       });
 
-    function storeUser(token, user) {
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-    }
+    // function storeUser(token, user) {
+    //   localStorage.setItem("token", token);
+    //   localStorage.setItem("user", JSON.stringify(user));
+    // }
   };
 
   render() {
@@ -45,7 +45,7 @@ export default class Login extends Component {
         <h3>Login</h3>
 
         <FormGroup>
-          <Label>Username</Label>
+          <Label>Login</Label>
           <Input
             type="Username"
             className=""

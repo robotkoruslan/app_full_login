@@ -7,14 +7,14 @@ export default class SignUp extends Component {
     e.preventDefault();
     const user = {
       name: this.name,
-      login: this.login,
+      username: this.username,
       email: this.email,
       password: this.password,
     };
     if (!user.name) {
       alert("Enter Name");
-    } else if (!user.login) {
-      alert("Enter Login");
+    } else if (!user.username) {
+      alert("Enter Login!!!");
     } else if (!user.email) {
       alert("Enter Email");
     } else if (!user.password) {
@@ -23,14 +23,13 @@ export default class SignUp extends Component {
       console.log("Data will send on server");
     }
 
-    axios
-      .post("/account/reg", user)
+    axios.post("/users/register", user)
       .then((res) => {
-        if (res.data.success) {
-          alert(res.data.msg);
+        if (res.data.status === "success") {
+          alert(res.data.message);
           window.location.href = "/";
         } else {
-          alert(res.data.msg);
+          alert(res.data.message);
         }
       })
       .catch((err) => {
@@ -55,12 +54,12 @@ export default class SignUp extends Component {
         </FormGroup>
 
         <FormGroup>
-          <Label for="login">Login</Label>
+          <Label for="username">Username</Label>
           <Input
             type="text"
-            id="login"
-            placeholder="login"
-            onChange={(e) => (this.login = e.target.value)}
+            id="username"
+            placeholder="Username"
+            onChange={(e) => (this.username = e.target.value)}
           />
         </FormGroup>
 
