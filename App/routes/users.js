@@ -10,11 +10,33 @@ var mongodb = require("mongodb");
 var ObjectId = mongodb.ObjectId;
 
 //Users list
-router.get("/", (req, res) => {
-  User.find().then((user) => res.json(user));
-});
+// router.get("/", (req, res) => {
+//   User.find().then((user) => res.json(user));
+// });
 
-//Get user by username
+
+//Get user
+router.get("/getUser", function(req, res){
+  const accessToken = req.data.accessToken
+  User.findOne({
+    "accessToken": accessToken
+  }, function(error, user){
+    if (user === null){
+      res.json({
+        "status": "error",
+        "message": "User has been logged out. Please login again."
+      })
+    } else {
+      res.json({
+        "status": "success",
+        "message": "Record has been fetched.",
+        "data": user
+      })
+    }
+  })
+})
+
+
 router.get("/:username", (req, res) => {
   User.findOne(
     {

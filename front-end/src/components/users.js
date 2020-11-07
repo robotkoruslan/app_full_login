@@ -14,76 +14,76 @@ import axios from "axios";
 
 export default class Users extends Component {
   state = {
-    contacts: [],
-    newContactData: {
+    users: [],
+    newUserData: {
       name: "",
-      login: "",
+      username: "",
       email: "",
     },
-    editContactData: {
+    editUserData: {
       name: "",
-      login: "",
+      username: "",
       email: "",
     },
-    newContactModal: false,
-    editContactModal: false,
+    newUserModal: false,
+    editUserModal: false,
   };
   async UNSAFE_componentWillMount() {
     this._refreshList();
   }
 
-  toggleNewContactModal() {
+  toggleNewUserModal() {
     this.setState({
-      newContactModal: !this.state.newContactModal,
+      newUserModal: !this.state.newUserModal,
     });
   }
 
-  toggleEditContactModal() {
+  toggleEditUserModal() {
     this.setState({
-      editContactModal: !this.state.editContactModal,
+      editUserModal: !this.state.editUserModal,
     });
   }
 
-  addContact() {
-    axios.post("contacts", this.state.newContactData).then((response) => {
-      let { contacts } = this.state;
-      contacts.push(response.data);
+  addUser() {
+    axios.post("users", this.state.newUserData).then((response) => {
+      let { users } = this.state;
+      users.push(response.data);
 
       this.setState({
-        contacts,
-        newContactModal: false,
-        newContactData: {
+        users,
+        newUserModal: false,
+        newUserData: {
           name: "",
-          login: "",
+          username: "",
           email: ""
         },
       });
     });
   }
-  updateContact() {
-    let { name, login, email } = this.state.editContactData;
+  updateUser() {
+    let { name, username, email } = this.state.editUserData;
 
-    axios.put("contacts/" + this.state.editContactData._id, {
+    axios.put("users/" + this.state.editUserData._id, {
         name,
-        login,
+        username,
         email,
       })
       .then((response) => {
         console.log(response.data);
         this._refreshList();
         this.setState({
-          editContactModal: false,
-          editContactData: { name: "", email: "", login: "" },
+          editUserModal: false,
+          editUserData: { name: "", email: "", username: "" },
         });
       });
   }
-  editContact(id, name, email, login) {
+  editUser(id, name, email, username) {
     this.setState({
-      editContactData: { id, name, email, login },
-      editContactModal: !this.state.editContactModal,
+      editUserData: { id, name, email, username },
+      editUserModal: !this.state.editUserModal,
     });
   }
-  deleteContact(id) {
+  deleteUser(id) {
     axios.delete("/users/" + id).then((response) => {
       this._refreshList();
     });
@@ -91,72 +91,50 @@ export default class Users extends Component {
   _refreshList() {
     axios.get("users").then((response) => {
       this.setState({
-        contacts: response.data,
+        users: response.data,
       });
     });
   }
 
   render() {
-    let contacts = this.state.contacts.map((contact) => {
+    let users = this.state.users.map((user) => {
       return (
-        <tr key={contact._id}>
-          <td>{contact.name}</td>
-          <td>{contact.email}</td>
-          <td>{contact.login}</td>
+        <tr key={user._id}>
+          <td>{user.name}</td>
+          <td>{user.email}</td>
+          <td>{user.username}</td>
           <td>
-            <Button
+          <Button
               color="success"
               size="sm"
-              className="mr-2"
-              onClick={this.editContact.bind(
-                this,
-                contact._id,
-                contact.name,
-                contact.email,
-                contact.login
-              )}
             >
-              Edit
+              Add friend
             </Button>
-            <Button
-              color="danger"
-              size="sm"
-              onClick={this.deleteContact.bind(this, contact._id)}
-            >
-              Delete
-            </Button>
+           
           </td>
         </tr>
       );
     });
     return (
       <div className="App container">
-        <h1>Contacts App</h1>
-
-        <Button
-          className="my-3"
-          color="primary"
-          onClick={this.toggleNewContactModal.bind(this)}
-        >
-          Add Contact
-        </Button>
+        <h1>Users</h1>
         <Modal
-          isOpen={this.state.newContactModal}
-          toggle={this.toggleNewContactModal.bind(this)}
+          isOpen={this.state.newUserModal}
+          toggle={this.toggleNewUserModal.bind(this)}
         >
-          <ModalHeader toggle={this.toggleNewContactModal.bind(this)}>
-            Add a new contact
+          <ModalHeader toggle={this.toggleNewUserModal.bind(this)}>
+            Add a new user
           </ModalHeader>
           <ModalBody>
             <FormGroup>
               <Label for="first_name">First name</Label>
               <Input
                 id="first_name"
-                value={this.state.newContactData.name}
+                value={this.state.newUserData.name}
                 onChange={(e) => {
-                  let { newContactData } = this.state;
-                  newContactData.name = e.target.value;
-                  this.setState({ newContactData });
+                  let { newUserData } = this.state;
+                  newUserData.name = e.target.value;
+                  this.setState({ newUserData });
                 }}
               />
             </FormGroup>
@@ -164,11 +142,11 @@ export default class Users extends Component {
               <Label for="last_name">Last name</Label>
               <Input
                 id="last_name"
-                value={this.state.newContactData.last_name}
+                value={this.state.newUserData.last_name}
                 onChange={(e) => {
-                  let { newContactData } = this.state;
-                  newContactData.last_name = e.target.value;
-                  this.setState({ newContactData });
+                  let { newUserData } = this.state;
+                  newUserData.last_name = e.target.value;
+                  this.setState({ newUserData });
                 }}
               />
             </FormGroup>
@@ -177,11 +155,11 @@ export default class Users extends Component {
               <Label for="email">Email</Label>
               <Input
                 id="email"
-                value={this.state.newContactData.email}
+                value={this.state.newUserData.email}
                 onChange={(e) => {
-                  let { newContactData } = this.state;
-                  newContactData.email = e.target.value;
-                  this.setState({ newContactData });
+                  let { newUserData } = this.state;
+                  newUserData.email = e.target.value;
+                  this.setState({ newUserData });
                 }}
               />
             </FormGroup>
@@ -190,22 +168,22 @@ export default class Users extends Component {
               <Label for="password">Password</Label>
               <Input
                 id="password"
-                value={this.state.newContactData.password}
+                value={this.state.newUserData.password}
                 onChange={(e) => {
-                  let { newContactData } = this.state;
-                  newContactData.password = e.target.value;
-                  this.setState({ newContactData });
+                  let { newUserData } = this.state;
+                  newUserData.password = e.target.value;
+                  this.setState({ newUserData });
                 }}
               />
             </FormGroup>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.addContact.bind(this)}>
-              Add contact
+            <Button color="primary" onClick={this.addUser.bind(this)}>
+              Add user
             </Button>{" "}
             <Button
               color="secondary"
-              onClick={this.toggleNewContactModal.bind(this)}
+              onClick={this.toggleNewUserModal.bind(this)}
             >
               Cancel
             </Button>
@@ -213,22 +191,22 @@ export default class Users extends Component {
         </Modal>
 
         <Modal
-          isOpen={this.state.editContactModal}
-          toggle={this.toggleEditContactModal.bind(this)}
+          isOpen={this.state.editUserModal}
+          toggle={this.toggleEditUserModal.bind(this)}
         >
-          <ModalHeader toggle={this.toggleEditContactModal.bind(this)}>
-            Edit a new contact
+          <ModalHeader toggle={this.toggleEditUserModal.bind(this)}>
+            Edit a new user
           </ModalHeader>
           <ModalBody>
             <FormGroup>
               <Label for="first_name">First name</Label>
               <Input
                 id="first_name"
-                value={this.state.editContactData.first_name}
+                value={this.state.editUserData.first_name}
                 onChange={(e) => {
-                  let { editContactData } = this.state;
-                  editContactData.first_name = e.target.value;
-                  this.setState({ editContactData });
+                  let { editUserData } = this.state;
+                  editUserData.first_name = e.target.value;
+                  this.setState({ editUserData });
                 }}
               />
             </FormGroup>
@@ -236,11 +214,11 @@ export default class Users extends Component {
               <Label for="last_name">Last name</Label>
               <Input
                 id="last_name"
-                value={this.state.editContactData.last_name}
+                value={this.state.editUserData.last_name}
                 onChange={(e) => {
-                  let { editContactData } = this.state;
-                  editContactData.last_name = e.target.value;
-                  this.setState({ editContactData });
+                  let { editUserData } = this.state;
+                  editUserData.last_name = e.target.value;
+                  this.setState({ editUserData });
                 }}
               />
             </FormGroup>
@@ -248,11 +226,11 @@ export default class Users extends Component {
               <Label for="email">Email</Label>
               <Input
                 id="email"
-                value={this.state.editContactData.email}
+                value={this.state.editUserData.email}
                 onChange={(e) => {
-                  let { editContactData } = this.state;
-                  editContactData.email = e.target.value;
-                  this.setState({ editContactData });
+                  let { editUserData } = this.state;
+                  editUserData.email = e.target.value;
+                  this.setState({ editUserData });
                 }}
               />
             </FormGroup>
@@ -260,22 +238,22 @@ export default class Users extends Component {
               <Label for="password">Password</Label>
               <Input
                 id="password"
-                value={this.state.editContactData.password}
+                value={this.state.editUserData.password}
                 onChange={(e) => {
-                  let { editContactData } = this.state;
-                  editContactData.password = e.target.value;
-                  this.setState({ editContactData });
+                  let { editUserData } = this.state;
+                  editUserData.password = e.target.value;
+                  this.setState({ editUserData });
                 }}
               />
             </FormGroup>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.updateContact.bind(this)}>
-              Update contact
+            <Button color="primary" onClick={this.updateUser.bind(this)}>
+              Update user
             </Button>{" "}
             <Button
               color="secondary"
-              onClick={this.toggleEditContactModal.bind(this)}
+              onClick={this.toggleEditUserModal.bind(this)}
             >
               Cancel
             </Button>
@@ -287,11 +265,11 @@ export default class Users extends Component {
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Login</th>
-              <th>Actions</th>
+              <th>Username</th>
+              <th>Request</th>
             </tr>
           </thead>
-          <tbody>{contacts}</tbody>
+          <tbody>{users}</tbody>
         </Table>
       </div>
     );
