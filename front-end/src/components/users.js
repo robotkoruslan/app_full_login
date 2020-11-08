@@ -88,11 +88,20 @@ export default class Users extends Component {
       this._refreshList();
     });
   }
+  
   _refreshList() {
-    axios.get("users").then((response) => {
-      this.setState({
-        users: response.data,
-      });
+    const data={
+      "accessToken": localStorage.getItem("accessToken")
+    }
+    axios.post("/users/", data).then((res) => {
+      if (res.data.status == "success") {
+        this.setState({
+          users: res.data.user,
+        });
+      } else {
+        alert(res.data.message)
+        window.location.href = "/";
+      }
     });
   }
 

@@ -7,17 +7,61 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const mongoose = require('mongoose');
 var mongodb = require("mongodb");
+const { json } = require("body-parser");
 var ObjectId = mongodb.ObjectId;
 
 //Users list
-// router.get("/", (req, res) => {
-//   User.find().then((user) => res.json(user));
+// router.get("/users/", function(req, res){
+//   const accessToken = req.body.accessToken
+//   User.findOne({
+//     "accessToken": accessToken
+//   }, function(error, user){
+//     if(user == null){
+//       res.json({
+//         "status": "error"
+//       })
+//     } else{
+//       User.find().then((user) => res.json(user))
+      
+//     }
+//   })
+//   // User.find().then((user) => res.json(user));
 // });
+router.post("/", function(req, res){
+  const token = req.body.accessToken
+  if (token == undefined) {
+    res.json({
+      "status": "error",
+      "message": "User has been logged out. Please login again."
+    })
+  } else {
+    User.find({
+      accessToken: { $ne: token}
+    }, function(error, user){
+      if(user === null){
+        res.json({
+          "status": "error",
+          "message": "User has been logged out. Please login again."
+        })
+      } else {
+        res.json({
+          "status": "success",
+          "message": "Record has been fetched.",
+          "user": user
+        })
+      
+      }
+    })
+  }
+
+
+
+})
 
 
 //Get user
-router.get("/getUser", function(req, res){
-  const accessToken = req.data.accessToken
+router.post("/getUser", function(req, res){
+  let accessToken = req.data.accessToken
   User.findOne({
     "accessToken": accessToken
   }, function(error, user){
@@ -37,26 +81,7 @@ router.get("/getUser", function(req, res){
 })
 
 
-router.get("/:username", (req, res) => {
-  User.findOne(
-    {
-      username: req.params.username,
-    },
-    function (error, user) {
-      if (user == null) {
-        res.send({
-          status: "error",
-          message: "User does not exists",
-        });
-      } else {
-        res.json(user);
-        // result.render("userProfile", {
-        //     "user": user
-        // });
-      }
-    }
-  );
-});
+
 
 router.post('/post2', function(req, res){
   const token = req.body.accessToken
