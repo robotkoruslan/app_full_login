@@ -22,7 +22,9 @@ export default class Login extends Component {
       .then((res) => {
         if (res.data.status === "success") {
           const accessToken = res.data.accessToken;
+          const _id = res.data._id
           localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("_idUser", _id);
           window.location.href = "/dashboard";
         } else { 
           alert(res.data.message)
@@ -32,11 +34,6 @@ export default class Login extends Component {
       .catch((err) => {
         console.log(err);
       });
-
-    // function storeUser(token, user) {
-    //   localStorage.setItem("token", token);
-    //   localStorage.setItem("user", JSON.stringify(user));
-    // }
   };
 
   render() {
@@ -69,3 +66,5 @@ export default class Login extends Component {
     );
   }
 }
+
+

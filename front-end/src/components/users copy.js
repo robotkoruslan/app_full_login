@@ -12,21 +12,10 @@ import {
 } from "reactstrap";
 import axios from "axios";
 
-
-
 export default class Users extends Component {
   state = {
     isLoading: false,
-    isFriend: "",
     users: [],
-    userFriend: [],
-    meId: "",
-    currentUser: {
-      name: "",
-      username: "",
-      email: "",
-      friends: [],
-    },
     newUserData: {
       name: "",
       username: "",
@@ -41,7 +30,6 @@ export default class Users extends Component {
     editUserModal: false,
   };
   async UNSAFE_componentWillMount() {
-    this.getCurrentUser();
     this._refreshList();
   }
 
@@ -54,17 +42,6 @@ export default class Users extends Component {
   toggleEditUserModal() {
     this.setState({
       editUserModal: !this.state.editUserModal,
-    });
-  }
-
-  getCurrentUser() {
-    const data = {
-      accessToken: localStorage.getItem("accessToken"),
-    };
-    axios.post("/users/getUser", data).then((res) => {
-      this.setState({
-        currentUser: res.data.user,
-      });
     });
   }
 
@@ -108,7 +85,7 @@ export default class Users extends Component {
       editUserModal: !this.state.editUserModal,
     });
   }
-  sendFriendRequest(id) {
+  addFriend(id) {
     const data = {
       accessToken: localStorage.getItem("accessToken"),
       _id: id,
@@ -124,95 +101,24 @@ export default class Users extends Component {
     // console.log(id);
     // console.log(localStorage.getItem("accessToken"));
   }
-  acceptFriendRequest(id) {
-    const data = {
-      accessToken: localStorage.getItem("accessToken"),
-      _id: id,
-    };
-    axios.post("/users/acceptFriendRequest", data).then((res) => {
-      if (res.data.status === "success") {
-        alert(res.data.message);
-        this._refreshList();
-      } else {
-        alert(res.data.message);
-        this._refreshList();
-      }
-    });
-  }
-
-  rejectFriendRequest(id) {
-    const data = {
-      accessToken: localStorage.getItem("accessToken"),
-      _id: id,
-    };
-    axios.post("/users/unfriend", data).then((res) => {
-      if (res.data.status === "success") {
-        alert(res.data.message);
-        this._refreshList()
-      } else {
-        alert(res.data.message);
-        this._refreshList();
-      }
-    });
-  }
 
   // addFriend(id) {
   //   axios.post("sendFriendRequest").then((response) => {
   //     this._refreshList();
   //   });
   // }
+
   _refreshList() {
-    let { users } = this.state;
-    let { userFriend } = this.state;
     const data = {
-      accessToken: localStorage.getItem("accessToken"),
+      accessToken: localStorage.getItem("accessToken")
     };
     axios
       .post("/users/", data)
-      
       .then((res) => {
         if (res.data.status === "success") {
-          console.log("hello");
-          for (var a = 0; a < res.data.user.length; a++) {
-            var data = res.data.user[a];
-            if (this.state.currentUser._id === data._id) {
-              continue;
-            }
-            if (this.state.currentUser.friends.length === 0){
-              users.push(data);
-              continue;
-            }
-            for (var b = 0; b < this.state.currentUser.friends.length; b++){
-              var tempData = this.state.currentUser.friends[b];
-              if (tempData._id === data._id){
-                userFriend.push(tempData)
-                console.log(userFriend);
-              } else {
-                users.push(data);
-              }
-            }
-                //   for (var b = 0; b < this.state.currentUser.friends.length; b++) {
-            //     var tempData = this.state.currentUser.friends[b];
-            //     if (tempData._id === data._id) {
-            //       userFriend.push(tempData); 
-
-            // if ( data.friends.length === 0){
-            //   users.push(data);
-            // } else {
-            //   for (var b = 0; b < this.state.currentUser.friends.length; b++) {
-            //     var tempData = this.state.currentUser.friends[b];
-            //     if (tempData._id === data._id) {
-            //       userFriend.push(tempData);
-            //     } else {
-            //       users.push(data);
-
-            //     }
-            //   }
-
-            // }
-
-            // users.push(data);
-          }
+          this.setState({
+            users: res.data.user,
+          });
         } else {
           alert(res.data.message);
           window.location.href = "/";
@@ -223,7 +129,7 @@ export default class Users extends Component {
           this.setState({
             isLoading: true,
           });
-        }, 1200)
+        }, 600)
       );
   }
 
@@ -233,75 +139,31 @@ export default class Users extends Component {
       return <div>Loading...</div>;
     } else {
       let users = this.state.users.map((user) => {
-        return (
+        return (              
           <tr key={user._id}>
             <td>{user.name}</td>
             <td>{user.email}</td>
             <td>{user.username}</td>
-
+            <td>{111}</td>
+            <td>
+              {user.friends.map((friend) => {
+                return <li key={friend._id}>{friend.status}{friend.sentByMe}</li>;
+              })}
+            </td>
             <td>
               <Button
                 color="success"
                 size="sm"
-                onClick={this.sendFriendRequest.bind(this, user._id)}
+                onClick={this.addFriend.bind(this, user._id)}
               >
                 Add friend
               </Button>
             </td>
-          </tr>
-        );
-      });
-      let friends = this.state.userFriend.map((friend) => {
-        if (friend.status === "Accepted") {
-          return (
-            <tr key={friend._id}>
-              <td>{friend.name}</td>
-              <td>{friend.status}</td>
-            </tr>
-          );
-        }
-      });
-      let friendsOutgoing = this.state.userFriend.map((friend) => {
-        if (friend.sentByMe === true && friend.status === "Pending") {
-          return (
-            <tr key={friend._id}>
-              <td>{friend.name}</td>
-              <td>{friend.status}</td>
-            </tr>
-          );
-        }
-      });
-      let friendsIncoming = this.state.userFriend.map((friend) => {
-        if (friend.sentByMe === false && friend.status === "Pending") {
-          return (
-            <tr key={friend._id}>
-              <td>{friend.name}</td>
-              <td>
-                <div>
-                  <Button
-                    color="success"
-                    size="sm"
-                    className="mr-3"
-                    onClick={this.acceptFriendRequest.bind(this, friend._id)}
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    color="danger"
-                    size="sm"
-                    className="mr-3"
-                    onClick={this.rejectFriendRequest.bind(this, friend._id)}
-                  >
-                    Reject
-                  </Button>
-                </div>
-              </td>
-            </tr>
-          );
-        }
-      });
-      return (
+          </tr>)
         
+        
+      })
+      return (
         <div className="App container">
           <h1>Users</h1>
           <Modal
@@ -452,40 +314,11 @@ export default class Users extends Component {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Username</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>{users}</tbody>
-          </Table>
-          <h1>Outgoing request</h1>
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
+                <th>Status</th>
                 <th>Request</th>
               </tr>
             </thead>
-            <tbody>{friendsOutgoing}</tbody>
-          </Table>
-          <h1>Incoming request</h1>
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>{friendsIncoming}</tbody>
-          </Table>
-          <h1>Friends</h1>
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>{friends}</tbody>
+            <tbody>{users}</tbody>
           </Table>
         </div>
       );

@@ -5,183 +5,112 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/db");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 var mongodb = require("mongodb");
 const { json } = require("body-parser");
 var ObjectId = mongodb.ObjectId;
 
-//Users list
-// router.get("/users/", function(req, res){
-//   const accessToken = req.body.accessToken
-//   User.findOne({
-//     "accessToken": accessToken
-//   }, function(error, user){
-//     if(user == null){
-//       res.json({
-//         "status": "error"
-//       })
-//     } else{
-//       User.find().then((user) => res.json(user))
-      
-//     }
-//   })
-//   // User.find().then((user) => res.json(user));
-// });
-router.post("/", function(req, res){
-  const token = req.body.accessToken
-  if (token == undefined) {
-    res.json({
-      "status": "error",
-      "message": "User has been logged out. Please login again."
-    })
-  } else {
-    User.find({
-      accessToken: { $ne: token}
-    }, function(error, user){
-      if(user === null){
+// Users list
+router.post("/", function (req, res) {
+  const token = req.body.accessToken;
+  User.findOne(
+    {
+      accessToken: token,
+    },
+    function (error, user) {
+      if (user === null) {
         res.json({
-          "status": "error",
-          "message": "User has been logged out. Please login again."
-        })
-      } else {
-        res.json({
-          "status": "success",
-          "message": "Record has been fetched.",
-          "user": user
-        })
-      
-      }
-    })
-  }
-
-
-
-})
-
-
-//Get user
-router.post("/getUser", function(req, res){
-  let accessToken = req.data.accessToken
-  User.findOne({
-    "accessToken": accessToken
-  }, function(error, user){
-    if (user === null){
-      res.json({
-        "status": "error",
-        "message": "User has been logged out. Please login again."
-      })
-    } else {
-      res.json({
-        "status": "success",
-        "message": "Record has been fetched.",
-        "data": user
-      })
-    }
-  })
-})
-
-
-
-
-router.post('/post2', function(req, res){
-  const token = req.body.accessToken
-  const _id = req.body._id
-  User.findOne({
-    "accessToken": token
-  }, function(err, user){
-    if(user == null)
-    {res.json('No token')} else {
-      User.findOne({
-        "_id": _id
-      }, function(err, user){
-        if (user == null){
-          res.json("User not found")
-        } else {
-          res.json(user)
-        }
-      })
-    }
-  })
-})
-
- router.post("/post", function(req, res){
-   const accessToken = req.body.accessToken
-   const _id = req.body._id
-   User.findOne({
-     "accessToken": accessToken
-   }, function(err, user){
-     if(user == null){
-       res.json('Please login')
-     } else {
-       User.findOne({
-         "_id": _id
-       }, function(error, user){
-         if (user == null){
-           res.json("error User not found")
-         } else {
-           res.json(user)
-         }
-       })
-     }
-   })
- })
-
-router.post("/sendFriendRequest", function(req, res) {
-  const accessToken = req.body.accessToken;
-  const _id = req.body._id;
-
-  User.findOne({
-      "accessToken": accessToken
-    }, function (error, user) {
-      if (user == null) {
-        res.json({
-          "status": "error",
-          "message": "User has been logged out. Please login again",
+          status: "error",
+          message: "User has been logged out. Please login again.",
         });
       } else {
-        const me = user;
+        User.find().then((user) =>
+          res.json({
+            status: "success",
+            message: "Record has been fetched.",
+            user: user,
+          })
+        );
+      }
+    }
+  );
+});
+// router.post("/", function (req, res) {
+//   const token = req.body.accessToken;
+//   if (token == undefined) {
+//     res.json({
+//       status: "error",
+//       message: "User has been logged out. Please login again.",
+//     });
+//   } else {
+//     User.find(
+//       {
+//         accessToken: { $ne: token },
+//       },
+//       function (error, user) {
+//         if (user === null) {
+//           res.json({
+//             status: "error",
+//             message: "User has been logged out. Please login again.",
+//           });
+//         } else {
+//           res.json({
+//             status: "success",
+//             message: "Record has been fetched.",
+//             user: user,
+//           });
+//         }
+//       }
+//     );
+//   }
+// });
+
+//Get user
+router.post("/getUser", function (req, res) {
+  const token = req.body.accessToken;
+  User.findOne(
+    {
+      accessToken: token,
+    },
+    function (error, user) {
+      if (user === null) {
+        res.json({
+          status: "error",
+          message: "User has been logged out. Please login again.!!!",
+          user
+        });
+      } else {
+          res.json({
+            status: "success",
+            message: "Record has been fetched.",
+            user: user
+          })
+      
+      }
+    }
+  );
+});
+
+router.post("/post2", function (req, res) {
+  const token = req.body.accessToken;
+  const _id = req.body._id;
+  User.findOne(
+    {
+      accessToken: token,
+    },
+    function (err, user) {
+      if (user == null) {
+        res.json("No token");
+      } else {
         User.findOne(
           {
-            "_id": ObjectId(_id)
-          }, function (error, user) {
+            _id: _id,
+          },
+          function (err, user) {
             if (user == null) {
-              res.json({
-                "status": "error",
-                "message": "User does not exist",
-              });
+              res.json("User not found");
             } else {
-              User.updateOne({
-                  _id: _id,
-                },{
-                  $push: {
-                    friends: {
-                      "_id": me._id,
-                      "name": me.name,
-                      "status": "Pending",
-                      "sentByMe": false,
-                      "inbox": []
-                    }
-                  }
-                },function (error, data) {
-                  User.updateOne({
-                      _id: me._id,
-                    },{
-                      $push: {
-                        "friends": {
-                          "_id": user._id,
-                          "name": user.name,
-                          "status": "Pending",
-                          "sentByMe": true,
-                          "inbox": []
-                        }
-                      }
-                    },function (error, data) {
-                      res.json({
-                        "status": "success",
-                        "message": "Friend request has been sent.",
-                      });
-                    });
-                });
+              res.json(user);
             }
           }
         );
@@ -190,123 +119,261 @@ router.post("/sendFriendRequest", function(req, res) {
   );
 });
 
-router.post("/acceptFriendRequest", function (req, res){
+router.post("/post", function (req, res) {
   const accessToken = req.body.accessToken;
   const _id = req.body._id;
-  User.findOne({
-    "accessToken": accessToken
-  }, function(error, user){
-    if (user == null){
-      res.json({
-        "status": "error",
-        "message": "User has been logged out. Please login again",
-      })
-    } else {
-      const me = user;
-      User.findOne({
-        "_id": _id
-      }, function(error, user){
-        if(user == null){
-          res.json({ "status": "error",
-          "message": "User does not exist"
-        })
-        } else {
-          User.updateOne({
-            "_id": _id
-          },{
-            $push: {
-              "notification" : {
-                "_id": _id,
-                "type": "friend_request_accepted",
-                "content" : me.name + " accepted your friend request.",
-                "createdAt": new Date().getTime()
-              }
+  User.findOne(
+    {
+      accessToken: accessToken,
+    },
+    function (err, user) {
+      if (user == null) {
+        res.json("Please login");
+      } else {
+        User.findOne(
+          {
+            _id: _id,
+          },
+          function (error, user) {
+            if (user == null) {
+              res.json("error User not found");
+            } else {
+              res.json(user);
             }
-          });
-          User.updateOne({
-            $and: [{
-              "_id": _id
-            },{
-              "friends._id": me._id
-            }]
-          },{
-            $set: {
-              "friends.$.status": "Accepted"
-            }
-          }, function (error, data){
-            User.updateOne({
-              $and: [{
-                "_id": me._id
-              },{
-                "friends._id": user._id
-              }]
-            },{
-              $set: {
-                "friends.$.status": "Accepted"
-              }
-            }, function(error, data){
-              res.json({
-                "status": "success",
-                "massage": "Friend request has been accepted."
-              });
-            });
-          });
-        }
-      });
+          }
+        );
+      }
     }
-  });
+  );
 });
 
-router.post("/unfriend", function(req, res){
+router.post("/sendFriendRequest", function (req, res) {
   const accessToken = req.body.accessToken;
   const _id = req.body._id;
-  User.findOne({
-    "accessToken": accessToken
-  }, function(error,user){
-    if (user == null) {
-      res.json({
-        "status": "error",
-        "message": "User has been logged out. Please login again",  
-      })
-    } else {
-      const me = user;
-      User.findOne({
-        "_id": _id
-      }, function(error, user){
-        if(user == null){
-          res.json({
-            "status": "error",
-          "message": "User does not exist"
-          })
-        } else {
-          User.updateOne({
-            "_id": _id
-          }, {
-            $pull: {
-              "friends": {
-              "_id": me._id
-              }
-            }
-          }, function (error, data){
-            User.updateOne({
-              "_id": me._id
-            },{
-              $pull:{
-                "friends": {
-                  "_id": user._id
-                }
-              }
-            }, function(error,data){
+
+  User.findOne(
+    {
+      accessToken: accessToken,
+    },
+    function (error, user) {
+      if (user == null) {
+        res.json({
+          status: "error",
+          message: "User has been logged out. Please login again",
+        });
+      } else {
+        const me = user;
+        User.findOne(
+          {
+            _id: ObjectId(_id),
+          },
+          function (error, user) {
+            if (user == null) {
               res.json({
-                "status": "success",
-                "message": "Friend has been removed."
+                status: "error",
+                message: "User does not exist",
               });
-            });
-          });
-        } 
-      });
+            } else {
+              User.updateOne(
+                {
+                  _id: _id,
+                },
+                {
+                  $push: {
+                    friends: {
+                      _id: me._id,
+                      name: me.name,
+                      status: "Pending",
+                      sentByMe: false,
+                      inbox: [],
+                    },
+                  },
+                },
+                function (error, data) {
+                  User.updateOne(
+                    {
+                      _id: me._id,
+                    },
+                    {
+                      $push: {
+                        friends: {
+                          _id: user._id,
+                          name: user.name,
+                          status: "Pending",
+                          sentByMe: true,
+                          inbox: [],
+                        },
+                      },
+                    },
+                    function (error, data) {
+                      res.json({
+                        status: "success",
+                        message: "Friend request has been sent.",
+                      });
+                    }
+                  );
+                }
+              );
+            }
+          }
+        );
+      }
     }
-  });
+  );
+});
+
+router.post("/acceptFriendRequest", function (req, res) {
+  const accessToken = req.body.accessToken;
+  const _id = req.body._id;
+  User.findOne(
+    {
+      accessToken: accessToken,
+    },
+    function (error, user) {
+      if (user == null) {
+        res.json({
+          status: "error",
+          message: "User has been logged out. Please login again",
+        });
+      } else {
+        const me = user;
+        User.findOne(
+          {
+            _id: _id,
+          },
+          function (error, user) {
+            if (user == null) {
+              res.json({ status: "error", message: "User does not exist" });
+            } else {
+              User.updateOne(
+                {
+                  _id: _id,
+                },
+                {
+                  $push: {
+                    notification: {
+                      _id: _id,
+                      type: "friend_request_accepted",
+                      content: me.name + " accepted your friend request.",
+                      createdAt: new Date().getTime(),
+                    },
+                  },
+                }
+              );
+              User.updateOne(
+                {
+                  $and: [
+                    {
+                      _id: _id,
+                    },
+                    {
+                      "friends._id": me._id,
+                    },
+                  ],
+                },
+                {
+                  $set: {
+                    "friends.$.status": "Accepted",
+                  },
+                },
+                function (error, data) {
+                  User.updateOne(
+                    {
+                      $and: [
+                        {
+                          _id: me._id,
+                        },
+                        {
+                          "friends._id": user._id,
+                        },
+                      ],
+                    },
+                    {
+                      $set: {
+                        "friends.$.status": "Accepted",
+                      },
+                    },
+                    function (error, data) {
+                      res.json({
+                        status: "success",
+                        message: "Friend request has been accepted.",
+                      });
+                    }
+                  );
+                }
+              );
+            }
+          }
+        );
+      }
+    }
+  );
+});
+
+router.post("/unfriend", function (req, res) {
+  const accessToken = req.body.accessToken;
+  const _id = req.body._id;
+  User.findOne(
+    {
+      accessToken: accessToken,
+    },
+    function (error, user) {
+      if (user == null) {
+        res.json({
+          status: "error",
+          message: "User has been logged out. Please login again",
+        });
+      } else {
+        const me = user;
+        User.findOne(
+          {
+            _id: _id,
+          },
+          function (error, user) {
+            if (user == null) {
+              res.json({
+                status: "error",
+                message: "User does not exist",
+              });
+            } else {
+              User.updateOne(
+                {
+                  _id: _id,
+                },
+                {
+                  $pull: {
+                    friends: {
+                      _id: me._id,
+                    },
+                  },
+                },
+                function (error, data) {
+                  User.updateOne(
+                    {
+                      _id: me._id,
+                    },
+                    {
+                      $pull: {
+                        friends: {
+                          _id: user._id,
+                        },
+                      },
+                    },
+                    function (error, data) {
+                      res.json({
+                        status: "success",
+                        message: "Friend has been removed.",
+                      });
+                    }
+                  );
+                }
+              );
+            }
+          }
+        );
+      }
+    }
+  );
 });
 
 // router.get("/:username", (req, result) => {
@@ -338,35 +405,34 @@ router.get("/register", (req, res) => {
 });
 
 router.post("/register", (req, res) => {
-  const username = req.body.username
+  const username = req.body.username;
 
-  User.findOne({
-    "username": username
-  }, function(error, user){
-    if (user == null){
-      let newUser = new User({
-        name: req.body.name,
-        email: req.body.email,
-        username: req.body.username,
-        password: req.body.password,
-        accessToken: ""
-      });
-      
-      User.createUser(newUser, (err, user) => {
-        if (err) {
-          res.json({ status: "error", message: "User has not been added." });
-        } else {
-          res.json({ status: "success", message: "User has been added." });
-        }
-      });
-    } else {
-      res.json({ status: "error", message: "User already exist" });
+  User.findOne(
+    {
+      username: username,
+    },
+    function (error, user) {
+      if (user == null) {
+        let newUser = new User({
+          name: req.body.name,
+          email: req.body.email,
+          username: req.body.username,
+          password: req.body.password,
+          accessToken: "",
+        });
+
+        User.createUser(newUser, (err, user) => {
+          if (err) {
+            res.json({ status: "error", message: "User has not been added." });
+          } else {
+            res.json({ status: "success", message: "User has been added." });
+          }
+        });
+      } else {
+        res.json({ status: "error", message: "User already exist" });
+      }
     }
-  })
-
-
-
-
+  );
 
   //  res.redirect('/users/login');
 });
@@ -408,6 +474,7 @@ router.post("/login", function (req, res) {
                   message: "Login successfully",
                   username: username,
                   accessToken: accessToken,
+                  _id: user._id,
                 });
               }
             );

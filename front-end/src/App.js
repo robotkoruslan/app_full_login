@@ -29,10 +29,6 @@ function App() {
     return false;
 };
  
-console.log(isAuthenticated())
-
-
-
 return (
   <Router>
     <div className="App">
