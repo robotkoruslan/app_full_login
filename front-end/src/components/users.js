@@ -116,6 +116,7 @@ export default class Users extends Component {
     axios.post("/users/sendFriendRequest", data).then((res) => {
       if (res.data.status === "success") {
         alert(res.data.message);
+        window.location.href = "/users";
       } else {
         this._refreshList();
         alert(res.data.message);
@@ -132,7 +133,7 @@ export default class Users extends Component {
     axios.post("/users/acceptFriendRequest", data).then((res) => {
       if (res.data.status === "success") {
         alert(res.data.message);
-        this._refreshList();
+        window.location.href = "/users";
       } else {
         alert(res.data.message);
         this._refreshList();
@@ -148,7 +149,7 @@ export default class Users extends Component {
     axios.post("/users/unfriend", data).then((res) => {
       if (res.data.status === "success") {
         alert(res.data.message);
-        this._refreshList()
+        window.location.href = "/users";
       } else {
         alert(res.data.message);
         this._refreshList();
@@ -156,14 +157,28 @@ export default class Users extends Component {
     });
   }
 
-  // addFriend(id) {
-  //   axios.post("sendFriendRequest").then((response) => {
-  //     this._refreshList();
-  //   });
-  // }
+  cancelFriendRequest(id) {
+    const data = {
+      accessToken: localStorage.getItem("accessToken"),
+      _id: id,
+    };
+    console.log(data);
+    axios.post("/users/unfriend", data).then((res) => {
+      if (res.data.status === "success") {
+        alert(res.data.message);
+        window.location.href = "/users";
+      } else {
+        alert(res.data.message);
+        this._refreshList();
+      }
+    });
+  }
+
   _refreshList() {
+  
     let { users } = this.state;
     let { userFriend } = this.state;
+ 
     const data = {
       accessToken: localStorage.getItem("accessToken"),
     };
@@ -172,7 +187,6 @@ export default class Users extends Component {
       
       .then((res) => {
         if (res.data.status === "success") {
-          console.log("hello");
           for (var a = 0; a < res.data.user.length; a++) {
             var data = res.data.user[a];
             if (this.state.currentUser._id === data._id) {
@@ -186,32 +200,11 @@ export default class Users extends Component {
               var tempData = this.state.currentUser.friends[b];
               if (tempData._id === data._id){
                 userFriend.push(tempData)
-                console.log(userFriend);
               } else {
                 users.push(data);
+                
               }
             }
-                //   for (var b = 0; b < this.state.currentUser.friends.length; b++) {
-            //     var tempData = this.state.currentUser.friends[b];
-            //     if (tempData._id === data._id) {
-            //       userFriend.push(tempData); 
-
-            // if ( data.friends.length === 0){
-            //   users.push(data);
-            // } else {
-            //   for (var b = 0; b < this.state.currentUser.friends.length; b++) {
-            //     var tempData = this.state.currentUser.friends[b];
-            //     if (tempData._id === data._id) {
-            //       userFriend.push(tempData);
-            //     } else {
-            //       users.push(data);
-
-            //     }
-            //   }
-
-            // }
-
-            // users.push(data);
           }
         } else {
           alert(res.data.message);
@@ -257,6 +250,17 @@ export default class Users extends Component {
             <tr key={friend._id}>
               <td>{friend.name}</td>
               <td>{friend.status}</td>
+              <td>
+                <div>
+                    <Button
+                    color="danger"
+                    size="sm"
+                    // onClick={this.deleteFriend.bind(this, friend._id)}
+                  >
+                    Delete friends
+                  </Button>
+                </div>
+              </td>
             </tr>
           );
         }
@@ -267,6 +271,18 @@ export default class Users extends Component {
             <tr key={friend._id}>
               <td>{friend.name}</td>
               <td>{friend.status}</td>
+              <td>
+                <div>
+                    <Button
+                    color="danger"
+                    size="sm"
+                    
+                    onClick={this.cancelFriendRequest.bind(this, friend._id)}
+                  >
+                    Cancel request
+                  </Button>
+                </div>
+              </td>
             </tr>
           );
         }
@@ -463,6 +479,7 @@ export default class Users extends Component {
               <tr>
                 <th>Name</th>
                 <th>Request</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>{friendsOutgoing}</tbody>
