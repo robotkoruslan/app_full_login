@@ -196,6 +196,7 @@ export default class Users extends Component {
               users.push(data);
               continue;
             }
+            
             for (var b = 0; b < this.state.currentUser.friends.length; b++){
               var tempData = this.state.currentUser.friends[b];
               if (tempData._id === data._id){
