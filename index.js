@@ -2,15 +2,22 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const mongoose = require("mongoose");
-
 const cors = require("cors");
 const users = require("./routes/users");
-
 const config = require("./config/db");
-
 const app = express();
+const cookieSession = require("cookie-session")
 
 const port = 3001;
+
+
+app.use(cookieSession({
+    name: 'session',
+    keys: ["this is my secret"],
+
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 // Passport init
 app.use(passport.initialize());
@@ -38,17 +45,19 @@ app.listen(port, () => {
   console.log("Server was ranning" + port);
 });
 
-app.use("/users", users);
-app.get("/", (req, res) => {
-  res.send("Home page !");
+// WHERE LOGGED IN
+app.get('/welcome', (req, res) => {
+  if(req.session.user){
+      return res.redirect('/');
+  }
+  res.sendFile(__dirname + '/index.html');
 });
 
-// app.get('/users/:id', (req, res) => {
-//     User.findById(req.params.id).then(user => res.json(user))
-// })
+// WHERE LOGGED OUT
+app.post('/logout', (req, res) => {
+  req.session.user = null;
+  res.json({
+      success : true
+  })
+})
 
-// app.delete('/users/:id', (req, res) => {
-//     User.findByIdAndDelete(req.params.id).then(user => res.json(user))
-// })
-
-// app.use('/account', account)
